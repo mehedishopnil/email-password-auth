@@ -51,7 +51,8 @@ const NewRegister = () => {
     }
 
     return (
-        <div>
+        <div> 
+            <h2>New Register</h2>
             <form onSubmit={handleForm}>
                 <div className="form-group">
                     <label htmlFor="email">Email:</label>
