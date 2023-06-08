@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Register.css'
-import { getAuth, sendEmailVerification } from "firebase/auth";
+import { getAuth, sendEmailVerification, updateProfile } from "firebase/auth";
 import app from '../../Firebase/firebase.config';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Link } from 'react-router-dom';
@@ -18,7 +18,8 @@ const Register = () => {
         setError('')
         const email = event.target.email.value;
         const password = event.target.password.value;
-        console.log(email, password);
+        const name = event.target.name.value;
+        console.log(name, email, password);
         // validate
         if(!/(?=.*[A-Z])/.test(password)){
             setError('Please add at least one uppercase')
@@ -42,6 +43,7 @@ const Register = () => {
             event.target.reset();
             setSuccess('User has been created successfully')
             sendEmailVerify(result.user);
+            updateUserData(result.user, name);
         })
 
         .catch(error => {
@@ -58,13 +60,30 @@ const Register = () => {
             alert('Please verify your email address')
         })
     }
+
+    const updateUserData = (user, name) =>{
+        updateProfile(user, {
+            displayName: name
+        })
+        .then(() =>{
+            console.log('user name update');
+        })
+        .catch (error =>{
+            console.log(error);
+            setError(error.message);
+        })
+    }
  
     return (
         <div className='mt-5'>
             <h2>Please Register</h2>
             <form onSubmit={handleSubmit}>
+                <input type="text" name="name" id="name" placeholder='Your Name' required />
+                <br />
+
                 <input onChange={handleSubmit} type="email" name="email" id="email" placeholder='Your Email' required />
                 <br />
+
                 <input onBlur={handleSubmit} type="password" name="password" id="password" placeholder='Your Password' required />
                 <p className='text-danger'>{error}</p>
                 <br />

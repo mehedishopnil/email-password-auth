@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import React, { useRef, useState } from 'react';
+import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import app from '../../Firebase/firebase.config';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ const auth = getAuth(app);
 const Login = () => {
     const [error, setError] = useState();
     const [success, setSuccess] = useState();
+    const emailRef = useRef();
 
 
     const handleLogIn = event => {
@@ -37,8 +38,17 @@ const Login = () => {
             .then(result => {
                 const user = result.user;
                 console.log(user);
-                setSuccess('Successfully log in')
-                setError('')
+                setSuccess('successfully log in');
+                setError('');
+                if(!user.emailVerified){
+                    setError('Email address is not verified')
+                    return;
+                }
+                else{
+                    setSuccess('verified Email')
+                    return;
+                }
+                
             })
             .catch(error => {
                 console.log(error);
@@ -46,20 +56,35 @@ const Login = () => {
             })
     }
 
-
+        const handleResetPassword = event =>{
+            const email = emailRef.current.value;
+            if(!email){
+                alert('Please provide your email address to reset password')
+            }
+            sendPasswordResetEmail(auth, email)
+            .then(() =>{    
+                alert('Please check your email')
+            })
+            .catch(error =>{
+                console.log(error);
+                setError(error.message)
+            })
+        }
     return (
         <div className='mt-5'>
             <h3>Please Login</h3>
             <form onSubmit={handleLogIn}>
                 <div className="form-group">
                     <label htmlFor="email">Email:</label>
-                    <input type="email" name='email' className="form-control" id="email" />
+                    <input type="email" ref={emailRef} name='email' className="form-control" id="email" />
                 </div>
                 <div className="form-group">
                     <label htmlFor="password">Password:</label>
                     <input type="password" name='password' className="form-control" id="password" />
                     <p className='text-danger'>{error}</p>
                 </div>
+
+                <p>Forget Password? Please <button onClick={handleResetPassword} className='btn btn-link'>Reset password</button></p>
 
                 <button type="submit" className="btn btn-primary">Submit</button>
                 <p className='text-success'>{success}</p>
