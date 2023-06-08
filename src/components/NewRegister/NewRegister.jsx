@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import app from '../../Firebase/firebase.config';
+import { Link } from 'react-router-dom';
 
 const auth = getAuth(app)
 
@@ -65,8 +66,10 @@ const NewRegister = () => {
                 </div>
                
                 <button type="submit" className="btn btn-primary">Submit</button>
-                <p className='text-success'>{success}</p>
+                
             </form>
+            
+            <p className='text-success'>{success}</p>
             
         </div>
     );

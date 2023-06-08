@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './Register.css'
-import { getAuth } from "firebase/auth";
+import { getAuth, sendEmailVerification } from "firebase/auth";
 import app from '../../Firebase/firebase.config';
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Link } from 'react-router-dom';
 
 
 const auth = getAuth(app);
@@ -40,6 +41,7 @@ const Register = () => {
             setError('');
             event.target.reset();
             setSuccess('User has been created successfully')
+            sendEmailVerify(result.user);
         })
 
         .catch(error => {
@@ -49,28 +51,30 @@ const Register = () => {
         })
     }
 
-
-    const handleEmailChange = (event) =>{
-        // setEmail(event.target.value);
+    const sendEmailVerify = (user) => {
+        sendEmailVerification(user)
+        .then(result=>{
+            console.log(result);
+            alert('Please verify your email address')
+        })
     }
-
-    const handlePasswordBlur = (event) =>{
-        console.log(event.target.value);
-    }
+ 
     return (
-        <div>
+        <div className='mt-5'>
             <h2>Please Register</h2>
             <form onSubmit={handleSubmit}>
-                <input onChange={handleEmailChange} type="email" name="email" id="email" placeholder='Your Email' required />
+                <input onChange={handleSubmit} type="email" name="email" id="email" placeholder='Your Email' required />
                 <br />
-                <input onBlur={handlePasswordBlur} type="password" name="password" id="password" placeholder='Your Password' required />
+                <input onBlur={handleSubmit} type="password" name="password" id="password" placeholder='Your Password' required />
                 <p className='text-danger'>{error}</p>
                 <br />
                 <input className='submit' type="submit" value="Register" />
             </form>
             <p className='text-success'>{success}</p>
-            
+            <p>Already have an account? Please <Link to ='/login'>Login</Link></p>
         </div>
+
+        
     );
 };
 
