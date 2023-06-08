@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import app from '../../Firebase/firebase.config';
+import { Link } from 'react-router-dom';
 
 const auth = getAuth(app);
 
@@ -37,6 +38,7 @@ const Login = () => {
                 const user = result.user;
                 console.log(user);
                 setSuccess('Successfully log in')
+                setError('')
             })
             .catch(error => {
                 console.log(error);
@@ -46,7 +48,8 @@ const Login = () => {
 
 
     return (
-        <div>
+        <div className='mt-5'>
+            <h3>Please Login</h3>
             <form onSubmit={handleLogIn}>
                 <div className="form-group">
                     <label htmlFor="email">Email:</label>
@@ -61,6 +64,7 @@ const Login = () => {
                 <button type="submit" className="btn btn-primary">Submit</button>
                 <p className='text-success'>{success}</p>
             </form>
+            <p>New to this website? Please <Link to ='/register'>Register</Link></p>
         </div>
     );
 };
